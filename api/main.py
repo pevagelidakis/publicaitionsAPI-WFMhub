@@ -11,44 +11,30 @@ MAX_PAPERS = 50
 
 
 def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
-    """Retrieves metadata safely from arXiv."""
+    search = arxiv.Search(
+        query=query_term,
+        max_results=max_results,
+        sort_by=arxiv.SortCriterion.Relevance,
+        sort_order=arxiv.SortOrder.Descending
+    )
+
+    client = arxiv.Client()
     papers_list = []
-    try:
-        search = arxiv.Search(
-            query=query_term,
-            max_results=max_results,
-            sort_by=arxiv.SortCriterion.SubmittedDate,
-            sort_order=arxiv.SortOrder.Descending
-        )
-        client = arxiv.Client()
 
-        for result in client.results(search):
-            try:
-                authors = [author.name for author in result.authors] if result.authors else ["Unknown"]
-                if len(authors) > 1:
-                    authors[-2] = authors[-2] + " & " + authors[-1]
-                    authors.pop()
-                authors_str = ', '.join(authors)
+    for result in client.results(search):
+        authors = [author.name for author in result.authors]
+        if len(authors) > 1:
+            authors[-2] = authors[-2] + " & " + authors[-1]
+            authors.pop()
 
-                published_str = result.published.strftime("%B %d, %Y") if result.published else "Unknown"
-                doi_str = result.doi if result.doi else result.entry_id.split("arxiv.org/abs/")[-1]
-                abstract_str = result.summary.strip() if result.summary else "No abstract available"
-                title_str = result.title.strip() if result.title else "No title"
-
-                papers_list.append({
-                    'Title': title_str,
-                    'Authors': authors_str,
-                    'Abstract': abstract_str,
-                    'URL': result.entry_id.replace('http:', 'https:').replace('abs', 'pdf'),
-                    'DOI': doi_str,
-                    'Published': published_str,
-                })
-            except Exception as e_paper:
-                # Skip a paper if processing fails
-                print(f"Skipping a paper due to error: {e_paper}")
-                continue
-    except Exception as e_search:
-        print(f"Error fetching arXiv results: {e_search}")
+        papers_list.append({
+            'Title': result.title.strip(),
+            'Authors': ', '.join(authors),
+            'Abstract': result.summary.strip(),
+            'URL': result.entry_id.replace('http:', 'https:').replace('abs', 'pdf'),
+            'DOI': result.doi if result.doi else result.entry_id.split('abs/')[-1],
+            'Published': result.published.strftime("%B %d, %Y"),
+        })
 
     return papers_list
 
@@ -180,6 +166,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
