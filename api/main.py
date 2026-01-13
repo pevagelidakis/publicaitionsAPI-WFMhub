@@ -157,11 +157,6 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
 
     html_content += f"""
     <div class="footer">Data fetched: {datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")} UTC</div>
-    <!-- Vercel Web Analytics -->
-    <script>
-      window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
     </body></html>
     """
 
