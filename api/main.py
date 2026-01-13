@@ -17,7 +17,7 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
         search = arxiv.Search(
             query=query_term,
             max_results=max_results,
-            sort_by=arxiv.SortCriterion.Relevance,
+            sort_by=arxiv.SortCriterion.SubmittedDate,
             sort_order=arxiv.SortOrder.Descending
         )
         client = arxiv.Client()
@@ -191,6 +191,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
