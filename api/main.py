@@ -120,10 +120,10 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 }}
             }}
             .paper-section {{ margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; }}
-            .authors {{ font-size: 11px; text-align: center; }}
-            .title {{ font-size: 24px; font-weight: bold; text-align: center; }}
-            .abstract {{ font-size: 16px; text-align: justify; }}
-            .footer {{ font-size: 9px; color: #888; text-align: right; margin-top: 20px; }}
+            .authors {{ font-size: 12px; text-align: center; }}
+            .title {{ font-size: 18px; font-weight: bold; text-align: center; }}
+            .abstract {{ font-size: 14px; text-align: justify; }}
+            .footer {{ font-size: 11px; color: #888; text-align: right; margin-top: 20px; }}
         </style>
     </head>
     <body>
@@ -148,7 +148,7 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 arXiv: <a href="{paper['URL']}" target="_blank" style = "color: #1155cc;\n      text-decoration: none;">{paper['DOI']}</a>, {paper['Published']}
                 </p>
                 <p class="abstract">
-                    <a href="{paper['URL']}" target="_blank" style = "color: #000000;\n      text-decoration: none;"><span class="bold-prefix">Abstract. </span>{paper['Abstract']}</a>
+                    <a href="{paper['URL']}" target="_blank" style = "color: #000000;\n      text-decoration: none;"><b>Abstract. </b>{paper['Abstract']}</a>
                 </p>
             </div>
             """
@@ -171,6 +171,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
