@@ -51,14 +51,14 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
         <style>
             body {{ font-family: 'Playfair Display', serif; margin: 10px; }}
-            .search-box {
+            .search-box {{
                 display: flex;
                 justify-content: center;
                 margin: 30px 0;
-            }
+            }}
             
             /* Style the input */
-            .search-box input[type="text"] {
+            .search-box input[type="text"] {{
                 width: 60%;
                 padding: 12px 20px;
                 font-size: 16px;
@@ -67,16 +67,16 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 outline: none;
                 transition: 0.3s;
                 font-family: 'Playfair Display', serif;
-            }
+            }}
             
             /* Focus effect */
-            .search-box input[type="text"]:focus {
+            .search-box input[type="text"]:focus {{
                 border-color: #4A90E2;
                 box-shadow: 0 0 10px rgba(74, 144, 226, 0.4);
-            }
+            }}
             
             /* Style the button */
-            .search-box button {
+            .search-box button {{
                 padding: 12px 25px;
                 font-size: 16px;
                 border: 2px solid #4A90E2;
@@ -86,26 +86,26 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 border-radius: 0 30px 30px 0; /* rounded right side */
                 cursor: pointer;
                 transition: 0.3s;
-            }
+            }}
             
             /* Hover effect */
-            .search-box button:hover {
+            .search-box button:hover {{
                 background-color: #357ABD;
                 border-color: #357ABD;
-            }
+            }}
             
             /* Make responsive for small screens */
-            @media (max-width: 600px) {
-                .search-box input[type="text"] {
+            @media (max-width: 600px) {{
+                .search-box input[type="text"] {{
                     width: 70%;
                     padding: 10px;
                     font-size: 14px;
-                }
-                .search-box button {
+                }}
+                .search-box button {{
                     padding: 10px 15px;
                     font-size: 14px;
-                }
-            }
+                }}
+            }}
             .paper-section {{ margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; }}
             .authors {{ font-size: 11px; text-align: center; }}
             .title {{ font-size: 14px; font-weight: bold; text-align: center; }}
@@ -151,5 +151,6 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
