@@ -11,31 +11,34 @@ MAX_PAPERS = 50
 
 
 def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
-    search = arxiv.Search(
-        query=query_term,
-        max_results=max_results,
-        sort_by=arxiv.SortCriterion.Relevance,
-        sort_order=arxiv.SortOrder.Descending
-    )
+    """Retrieves the necessary metadata from arXiv."""
+    try:
+        search = arxiv.Search(
+            query=query_term,
+            max_results=max_results,
+            sort_by=arxiv.SortCriterion.Relevance,
+            sort_order=arxiv.SortOrder.Descending
+        )
+        client = arxiv.Client()
+        results = client.results(search)
 
-    client = arxiv.Client()
-    papers_list = []
-
-    for result in client.results(search):
-        authors = [author.name for author in result.authors]
-        if len(authors) > 1:
-            authors[-2] = authors[-2] + " & " + authors[-1]
-            authors.pop()
-
-        papers_list.append({
-            'Title': result.title.strip(),
-            'Authors': ', '.join(authors),
-            'Abstract': result.summary.strip(),
-            'URL': result.entry_id.replace('http:', 'https:').replace('abs', 'pdf'),
-            'Published': result.published.strftime("%B %d, %Y"),
-        })
-
-    return papers_list
+        papers_list = []
+        for result in results:
+            authors = [author.name for author in result.authors]
+            if len(authors)>1:
+              authors[-2] = authors[-2] + " & " + authors[-1]
+              authors.pop()
+            authors = ', '.join(authors)
+            papers_list.append({
+                'Title': result.title.strip(),
+                'Authors': authors,
+                'Abstract': result.summary.strip(),
+                'Categories': ', '.join(result.categories),
+                'URL': result.entry_id.replace('http:', 'https:').replace('abs','pdf'),
+                'DOI': result.doi,
+                'Published': result.published.strftime("%B %d, %Y"),
+            })
+        return papers_list
 
 
 def generate_styled_html(papers: List[Dict], search_query: str) -> str:
@@ -120,7 +123,7 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
         </style>
     </head>
     <body>
-
+    <h2 style= "text-align: center;\n font-size: 28px;\n font-family: 'Playfair Display', serif;\n ">Latest Papers for "{search_query}"</h2>
     <div class="search-box">
         <form method="get">
             <input type="text" name="query" value="{safe_query}" placeholder="🔍 Search publications or topics..." />
@@ -133,9 +136,16 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
         for paper in papers:
             html_content += f"""
             <div class="paper-section">
-                <div class="authors"><a href="{paper['URL']}" target="_blank">{paper['Authors']}</a></div>
-                <div class="title"><a href="{paper['URL']}" target="_blank">{paper['Title']}</a></div>
-                <p class="abstract"><b>Abstract.</b> {paper['Abstract']}</p>
+                <div class="authors"><a href="{paper['URL']}" target="_blank" style = "color: #000000;\n      text-decoration: none;">{paper['Authors']}</a></div>
+                <div class="title">
+                    <a href="{paper['URL']}" target="_blank" style = "color: #000000;\n      text-decoration: none;">{paper['Title']}</a>
+                </div>
+                <p class="authors">
+                arXiv: <a href="{paper['URL']}" target="_blank" style = "color: #1155cc;\n      text-decoration: none;">{paper['DOI']}</a>, {paper['Published']}
+                </p>
+                <p class="abstract">
+                    <a href="{paper['URL']}" target="_blank" style = "color: #000000;\n      text-decoration: none;"><span class="bold-prefix">Abstract. </span>{paper['Abstract']}</a>
+                </p>
             </div>
             """
     else:
@@ -157,6 +167,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
