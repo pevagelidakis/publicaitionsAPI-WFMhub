@@ -51,15 +51,23 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
         <style>
             body {{ font-family: 'Playfair Display', serif; margin: 10px; }}
+            /* Center the box */
             .search-box {{
                 display: flex;
                 justify-content: center;
                 margin: 30px 0;
             }}
             
+            /* Form container: align input and button horizontally */
+            .search-box form {{
+                display: flex;
+                width: 80%;   /* make form wider */
+                max-width: 800px;
+            }}
+            
             /* Style the input */
             .search-box input[type="text"] {{
-                width: 60%;
+                flex: 1; /* take all available space */
                 padding: 12px 20px;
                 font-size: 16px;
                 border: 2px solid #ccc;
@@ -80,7 +88,7 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 padding: 12px 25px;
                 font-size: 16px;
                 border: 2px solid #4A90E2;
-                border-left: none; /* remove double border with input */
+                border-left: none; /* avoid double border with input */
                 background-color: #4A90E2;
                 color: white;
                 border-radius: 0 30px 30px 0; /* rounded right side */
@@ -94,16 +102,14 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
                 border-color: #357ABD;
             }}
             
-            /* Make responsive for small screens */
+            /* Responsive */
             @media (max-width: 600px) {{
-                .search-box input[type="text"] {{
-                    width: 70%;
-                    padding: 10px;
-                    font-size: 14px;
+                .search-box form {{
+                    width: 95%;
                 }}
-                .search-box button {{
-                    padding: 10px 15px;
+                .search-box input[type="text"], .search-box button {{
                     font-size: 14px;
+                    padding: 10px;
                 }}
             }}
             .paper-section {{ margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; }}
@@ -151,6 +157,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
