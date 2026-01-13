@@ -131,7 +131,7 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
     """
 
     if search_query:
-            html_content += f"""<h2 style= "text-align: center;\n font-size: 28px;\n font-family: 'Playfair Display', serif;\n ">Latest Papers for "{search_query}"</h2>"""
+        html_content += f"""<h2 style= "text-align: center;\n font-size: 28px;\n font-family: 'Playfair Display', serif;\n ">Latest Papers for "{search_query}"</h2>"""
         for paper in papers:
             html_content += f"""
             <div class="paper-section">
@@ -166,6 +166,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
