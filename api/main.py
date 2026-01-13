@@ -30,7 +30,7 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
                     authors.pop()
                 authors_str = ', '.join(authors)
 
-                published_dt = result.published if result.published else None
+                published_dt = result.published.strftime("%B %d, %Y") if result.published else "Unknown"
                 doi_str = result.doi if result.doi else result.entry_id.split("arxiv.org/abs/")[-1]
                 abstract_str = result.summary.strip() if result.summary else "No abstract available"
                 title_str = result.title.strip() if result.title else "No title"
@@ -47,17 +47,6 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
             except Exception as e_paper:
                 print(f"Skipping paper due to error: {e_paper}")
                 continue
-
-        # Sort by datetime
-        papers_list.sort(key=lambda p: p['PublishedDate'] if p['PublishedDate'] else datetime.min, reverse=True)
-
-        # Convert datetime to string for display
-        for res in papers_list:
-            if isinstance(res['PublishedDate'], datetime):
-                res['Published'] = res['PublishedDate'].strftime("%B %d, %Y")
-            else:
-                res['Published'] = "Unknown"
-
     except Exception as e_search:
         print(f"Error fetching arXiv results: {e_search}")
 
@@ -191,6 +180,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
