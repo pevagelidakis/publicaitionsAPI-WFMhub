@@ -38,7 +38,7 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
         })
     papers_list.sort(key=lambda x: x['Published'], reverse=True)
     for paper in papers_list:
-        paper['Published'] = paper['Published'].strftime("%B %d, %Y") if paper['Published'].strftime("%B %d, %Y") else "Unknown",
+        paper['Published'] = paper['Published'][0].strftime("%B %d, %Y") if paper['Published'].strftime("%B %d, %Y") else "Unknown",
 
     return papers_list
 
@@ -119,8 +119,8 @@ def generate_styled_html(papers: List[Dict], search_query: str) -> str:
             }}
             .paper-section {{ margin-bottom: 25px; padding: 15px; border: 1px solid #e0e0e0; }}
             .authors {{ font-size: 11px; text-align: center; }}
-            .title {{ font-size: 14px; font-weight: bold; text-align: center; }}
-            .abstract {{ font-size: 11px; text-align: justify; }}
+            .title {{ font-size: 24px; font-weight: bold; text-align: center; }}
+            .abstract {{ font-size: 16px; text-align: justify; }}
             .footer {{ font-size: 9px; color: #888; text-align: right; margin-top: 20px; }}
         </style>
     </head>
@@ -169,6 +169,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
