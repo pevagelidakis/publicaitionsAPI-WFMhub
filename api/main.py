@@ -11,7 +11,7 @@ MAX_PAPERS = 50
 
 
 def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
-    """Retrieves metadata safely from arXiv, sorted by newest first."""
+    """Retrieves metadata safely from arXiv."""
     papers_list = []
     try:
         search = arxiv.Search(
@@ -30,7 +30,7 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
                     authors.pop()
                 authors_str = ', '.join(authors)
 
-                published_dt = result.published.strftime("%B %d, %Y") if result.published else "Unknown"
+                published_str = result.published.strftime("%B %d, %Y") if result.published else "Unknown"
                 doi_str = result.doi if result.doi else result.entry_id.split("arxiv.org/abs/")[-1]
                 abstract_str = result.summary.strip() if result.summary else "No abstract available"
                 title_str = result.title.strip() if result.title else "No title"
@@ -41,11 +41,11 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
                     'Abstract': abstract_str,
                     'URL': result.entry_id.replace('http:', 'https:').replace('abs', 'pdf'),
                     'DOI': doi_str,
-                    'PublishedDate': published_dt,  # Keep datetime for sorting
-                    'Published': published_dt       # Will convert to string later
+                    'Published': published_str,
                 })
             except Exception as e_paper:
-                print(f"Skipping paper due to error: {e_paper}")
+                # Skip a paper if processing fails
+                print(f"Skipping a paper due to error: {e_paper}")
                 continue
     except Exception as e_search:
         print(f"Error fetching arXiv results: {e_search}")
@@ -180,6 +180,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
