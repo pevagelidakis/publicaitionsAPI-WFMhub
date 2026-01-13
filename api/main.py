@@ -51,6 +51,7 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
     except Exception as e_search:
         print(f"Error fetching arXiv results: {e_search}")
 
+    papers_list.sort(key=lambda p: p['Published'], reverse=True)
     return papers_list
 
 
@@ -180,6 +181,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
