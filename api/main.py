@@ -33,11 +33,14 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
             'Abstract': result.summary.strip(),
             'URL': result.entry_id.replace('http:', 'https:').replace('abs', 'pdf'),
             'DOI': result.doi if result.doi else result.entry_id.split('abs/')[-1],
-            'Published': result.published.strftime("%B %d, %Y"),
+            #'Published': result.published.strftime("%B %d, %Y"),
+            'Published': result.published  # Keep as datetime object for sorting
         })
+    papers_list.sort(key=lambda x: x['Published'], reverse=True)
+    for paper in papers_list:
+        paper['Published'] = paper['Published'].strftime("%B %d, %Y") if paper['Published'].strftime("%B %d, %Y") else "Unknown",
 
     return papers_list
-
 
 
 def generate_styled_html(papers: List[Dict], search_query: str) -> str:
@@ -166,6 +169,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
