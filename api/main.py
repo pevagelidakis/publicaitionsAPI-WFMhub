@@ -49,13 +49,15 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
                 # Skip a paper if processing fails
                 print(f"Skipping a paper due to error: {e_paper}")
                 continue
-        papers_list.sort(key=lambda p: p['Published'], reverse=True)
         for res in papers_list:
-            res['Published'] = result.published.strftime("%B %d, %Y") if result.published else "Unknown"
+            if isinstance(res['Published'], datetime):
+                res['Published'] = res['Published'].strftime("%B %d, %Y")
+            else:
+                res['Published'] = "Unknown"
+
     except Exception as e_search:
         print(f"Error fetching arXiv results: {e_search}")
 
-    papers_list.sort(key=lambda p: p['Published'], reverse=True)
     return papers_list
 
 
@@ -185,6 +187,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
