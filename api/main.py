@@ -33,9 +33,8 @@ def get_arxiv_full_metadata(query_term: str, max_results: int) -> List[Dict]:
                 'Title': result.title.strip(),
                 'Authors': authors,
                 'Abstract': result.summary.strip(),
-                'Categories': ', '.join(result.categories),
                 'URL': result.entry_id.replace('http:', 'https:').replace('abs','pdf'),
-                'DOI': result.doi,
+                'DOI': result.doi if result.doi else result.entry_id.split("arxiv.org/abs/")[-1],
                 'Published': result.published.strftime("%B %d, %Y"),
             })
         return papers_list
@@ -167,6 +166,7 @@ def papers(query: str = Query(default="")):
         papers = []
 
     return generate_styled_html(papers, query)
+
 
 
 
