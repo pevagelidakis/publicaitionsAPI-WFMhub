@@ -67,6 +67,24 @@ ARXIV_CATEGORIES = {
     },
 }
 def build_arxiv_query(text_query: str, categories: List[str]) -> str:
+    """
+    Constructs a boolean query string for searching ArXiv with optional category filtering.
+
+    Parameters:
+        text_query (str): The main search query text (e.g., keywords, author names, or phrases).
+        categories (List[str]): A list of ArXiv category codes to filter the search.
+            If empty, no category filtering is applied.
+
+    Returns:
+        str: A combined ArXiv search query string.
+            - If categories are provided, the query is of the form:
+              "(cat:category1 OR cat:category2 ...) AND all:text_query"
+            - If no categories are provided, it returns just the text_query.
+
+    Example:
+        >>> build_arxiv_query("deep learning", ["cs.LG", "cs.CV"])
+        "(cat:cs.LG OR cat:cs.CV) AND all:deep learning"
+    """
     if not categories:
         return text_query
     cats = " OR ".join(f"cat:{c}" for c in categories)
@@ -75,6 +93,36 @@ def build_arxiv_query(text_query: str, categories: List[str]) -> str:
 
 
 def get_arxiv_full_metadata(query_term: str, categories: List[str], max_results: int) -> List[Dict]:
+    """
+    Searches ArXiv using the provided query and categories, and returns structured metadata for each paper.
+
+    Parameters:
+        query_term (str): The main search query string.
+        categories (List[str]): A list of ArXiv category codes to filter the search.
+        max_results (int): Maximum number of papers to fetch from ArXiv.
+
+    Returns:
+        List[Dict]: A list of dictionaries, each representing a paper with the following keys:
+            - "Title" (str): Paper title
+            - "Authors" (str): Comma-separated author names, combining the last two with '&'
+            - "Abstract" (str): Paper abstract
+            - "URL" (str): Direct PDF URL to the paper
+            - "DOI" (str): Paper DOI or ArXiv identifier if DOI is unavailable
+            - "Categories" (str): Comma-separated ArXiv categories
+            - "Published" (str): Publication date formatted as "Month Day, Year"; "Unknown" if unavailable
+
+    Behavior:
+        - Builds a query using `build_arxiv_query`.
+        - Sorts results by relevance in descending order.
+        - Combines the last two authors with '&' if multiple authors exist.
+        - Formats the publication date to a readable string.
+        - Returns papers sorted by newest first.
+
+    Example:
+        >>> papers = get_arxiv_full_metadata("transformers", ["cs.CL"], 5)
+        >>> papers[0]["Title"]
+        "Attention Is All You Need"
+    """
     final_query = build_arxiv_query(query_term, categories)
 
     search = arxiv.Search(
@@ -115,6 +163,35 @@ def get_arxiv_full_metadata(query_term: str, categories: List[str], max_results:
 
 
 def generate_styled_html(papers: List[Dict], search_query: str, selected_cats: List[str]) -> str:
+    """
+    Generates a fully styled HTML page displaying the search results and an advanced search panel.
+
+    Parameters:
+        papers (List[Dict]): List of paper metadata dictionaries (as returned by `get_arxiv_full_metadata`).
+        search_query (str): The original search query string to display in the search box and results header.
+        selected_cats (List[str]): List of category codes that were selected for filtering (used to pre-check checkboxes).
+
+    Returns:
+        str: A string containing a complete HTML page including:
+            - A modern, pill-shaped search input
+            - An "Advanced search" expandable section with category checkboxes
+            - A list of papers, each displayed as a card with:
+                - Title, authors, categories, DOI, publication date
+                - Abstract preview
+                - Hover effects for visual interaction
+
+    Features:
+        - Uses Playfair Display font
+        - Responsive layout
+        - Hover animations for paper cards
+        - Expanding/collapsing advanced search section
+        - Color-coded, modern UI styling
+
+    Example:
+        >>> html_content = generate_styled_html(papers, "quantum computing", ["quant-ph"])
+        >>> with open("results.html", "w") as f:
+        >>>     f.write(html_content)
+    """
     safe_query = html.escape(search_query)
 
     html_content = f"""<!DOCTYPE html>
@@ -404,6 +481,34 @@ def papers(
     query: str = Query(default=""),
     cat: List[str] = Query(default=[]),
 ):
+"""
+FastAPI endpoint: GET /
+
+Description:
+This endpoint serves the main search page for arXiv papers. It handles user queries and category filters,
+fetches relevant papers from the arXiv API, and returns a fully rendered HTML page.
+
+Parameters:
+- query (str, optional): The search term entered by the user. Default is an empty string.
+- cat (List[str], optional): A list of selected arXiv category codes (e.g., ['cs.LG', 'cs.AI']). Default is an empty list.
+
+Returns:
+- HTMLResponse: A complete HTML page containing:
+    * A search bar for entering queries
+    * An advanced search panel with category checkboxes
+    * A list of paper cards with authors, title, abstract, categories, DOI, and publication date
+    * Interactive styles: hover effects, collapsible panels, and responsive layout
+
+Behavior:
+- If the 'query' parameter is non-empty, the endpoint calls 'get_arxiv_full_metadata' to fetch papers from arXiv.
+- Selected categories in 'cat' are applied as filters.
+- The search results are sorted by relevance and displayed in a styled HTML page.
+- If 'query' is empty, the endpoint returns a search page with no results.
+
+Example Usage:
+GET http://localhost:8000/?query=machine+learning&cat=cs.LG&cat=cs.AI
+"""
+
     results = []
     if query.strip():
         results = get_arxiv_full_metadata(query, cat, MAX_PAPERS)
