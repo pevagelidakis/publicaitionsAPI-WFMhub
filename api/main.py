@@ -412,6 +412,103 @@ label {{
     opacity: 0;
     transition: opacity 0.25s ease;
 }}
+
+/* ===========================
+   Mobile responsiveness
+   =========================== */
+
+@media (max-width: 768px) {{
+
+    body {{
+        margin: 6px;
+        font-size: 15px;
+    }}
+
+    /* Search box */
+    .search-box form {{
+        width: 100%;
+        gap: 10px;
+    }}
+
+    .search-row {{
+        flex-direction: row;
+        padding: 4px;
+    }}
+
+    .search-box input[type="text"] {{
+        padding: 12px;
+        font-size: 15px;
+    }}
+
+    .search-box button {{
+        padding: 10px 16px;
+        font-size: 15px;
+        white-space: nowrap;
+    }}
+
+    /* Advanced search */
+    details.advanced summary {{
+        font-size: 13px;
+        padding: 6px 12px;
+    }}
+
+    .advanced-panel {{
+        padding: 14px;
+    }}
+
+    .subcats {{
+        grid-template-columns: 1fr; /* single column */
+        gap: 10px;
+        margin-left: 0;
+    }}
+
+    label {{
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }}
+
+    input[type="checkbox"] {{
+        width: 18px;
+        height: 18px;
+    }}
+
+    /* Paper cards */
+    .paper {{
+        padding: 14px;
+        margin: 16px 0;
+        border-radius: 12px;
+    }}
+
+    .paper:hover {{
+        transform: none; /* disable hover zoom */
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        border: 1px solid transparent;
+    }}
+
+    .paper::before {{
+        display: none; /* cleaner on mobile */
+    }}
+
+    .title {{
+        font-size: 16px;
+    }}
+
+    .authors {{
+        font-size: 13px;
+    }}
+
+    .abstract {{
+        font-size: 14px;
+        line-height: 1.5;
+    }}
+
+    h2 {{
+        font-size: 18px;
+        margin: 18px 0 10px;
+    }}
+}}
 </style>
 </head>
 <body>
