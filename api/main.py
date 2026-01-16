@@ -9,8 +9,6 @@ from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 MAX_PAPERS = 50
 
 
@@ -205,12 +203,6 @@ def generate_styled_html(papers: List[Dict], search_query: str, selected_cats: L
         <meta charset="utf-8">
         <title>Scriptorium: ArXiv Advance Search</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
-        <link rel="shortcut icon" href="/static/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-title" content="Scriptorium" />
-        <link rel="manifest" href="/static/site.webmanifest" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
         <style>
             body {{ font-family: 'Playfair Display', serif; margin: 10px; }}
@@ -586,10 +578,6 @@ label {{
 
     return html_content
 
-
-@app.get("/favicon.ico", include_in_schema=False)
-def favicon():
-    return FileResponse("static/favicon.ico")
 
 
 @app.get("/", response_class=HTMLResponse)
