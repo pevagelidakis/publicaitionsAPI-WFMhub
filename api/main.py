@@ -9,19 +9,16 @@ app = FastAPI()
 MAX_PAPERS = 50
 
 
-# -----------------------------
-# Curated category definitions
-# -----------------------------
 ARXIV_CATEGORIES = {
     "Computer Science": {
         "cs.AI": "Artificial Intelligence",
         "cs.LG": "Machine Learning",
         "cs.CV": "Computer Vision",
-        "cs.CL": "Natural Language Processing",
+        "cs.CL": "NLP",
         "cs.RO": "Robotics",
         "cs.DB": "Databases",
-        "cs.DS": "Algorithms & Data Structures",
-        "cs.CR": "Security & Cryptography",
+        "cs.DS": "Algorithms",
+        "cs.CR": "Security",
         "cs.OS": "Operating Systems",
         "cs.SE": "Software Engineering",
     },
@@ -34,7 +31,7 @@ ARXIV_CATEGORIES = {
         "math.ST": "Statistics Theory",
     },
     "Statistics": {
-        "stat.ML": "Machine Learning",
+        "stat.ML": "Statistical ML",
         "stat.TH": "Theory",
         "stat.ME": "Methodology",
         "stat.AP": "Applications",
@@ -46,12 +43,29 @@ ARXIV_CATEGORIES = {
         "astro-ph.CO": "Cosmology",
         "gr-qc": "General Relativity",
     },
+    "Quantitative Biology": {
+        "q-bio.QM": "Quantitative Methods",
+        "q-bio.NC": "Neurons & Cognition",
+        "q-bio.GN": "Genomics",
+    },
+    "Quantitative Finance": {
+        "q-fin.MF": "Mathematical Finance",
+        "q-fin.ST": "Statistical Finance",
+        "q-fin.PR": "Pricing",
+        "q-fin.RM": "Risk Management",
+    },
+    "Economics": {
+        "econ.EM": "Econometrics",
+        "econ.TH": "Theory",
+        "econ.GN": "General Economics",
+    },
+    "Electrical Engineering & Systems": {
+        "eess.SP": "Signal Processing",
+        "eess.IV": "Image & Video",
+        "eess.SY": "Systems & Control",
+        "eess.AS": "Audio & Speech",
+    },
 }
-
-
-# -----------------------------
-# Build arXiv boolean query
-# -----------------------------
 def build_arxiv_query(text_query: str, categories: List[str]) -> str:
     if not categories:
         return text_query
@@ -59,9 +73,7 @@ def build_arxiv_query(text_query: str, categories: List[str]) -> str:
     return f"({cats}) AND all:{text_query}"
 
 
-# -----------------------------
-# Fetch arXiv data
-# -----------------------------
+
 def get_arxiv_full_metadata(query_term: str, categories: List[str], max_results: int) -> List[Dict]:
     final_query = build_arxiv_query(query_term, categories)
 
@@ -102,9 +114,6 @@ def get_arxiv_full_metadata(query_term: str, categories: List[str], max_results:
     return papers
 
 
-# -----------------------------
-# Generate HTML
-# -----------------------------
 def generate_styled_html(papers: List[Dict], search_query: str, selected_cats: List[str]) -> str:
     safe_query = html.escape(search_query)
 
@@ -386,22 +395,10 @@ label {{
     </a>
 </div>
 """
-#     else:
-#         html_content += "<p>Enter a search term to begin.</p>"
-
-#     html_content += f"""
-# <div class="footer">Fetched {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</div>
-# </body>
-# </html>
-# """
 
     return html_content
 
 
-
-# -----------------------------
-# FastAPI route
-# -----------------------------
 @app.get("/", response_class=HTMLResponse)
 def papers(
     query: str = Query(default=""),
