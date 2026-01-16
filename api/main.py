@@ -481,34 +481,33 @@ def papers(
     query: str = Query(default=""),
     cat: List[str] = Query(default=[]),
 ):
-"""
-FastAPI endpoint: GET /
+    """
+    FastAPI endpoint: GET /
 
-Description:
-This endpoint serves the main search page for arXiv papers. It handles user queries and category filters,
-fetches relevant papers from the arXiv API, and returns a fully rendered HTML page.
+    Description:
+    This endpoint serves the main search page for arXiv papers. It handles user queries and category filters,
+    fetches relevant papers from the arXiv API, and returns a fully rendered HTML page.
 
-Parameters:
-- query (str, optional): The search term entered by the user. Default is an empty string.
-- cat (List[str], optional): A list of selected arXiv category codes (e.g., ['cs.LG', 'cs.AI']). Default is an empty list.
+    Parameters:
+    - query (str, optional): The search term entered by the user. Default is an empty string.
+    - cat (List[str], optional): A list of selected arXiv category codes (e.g., ['cs.LG', 'cs.AI']). Default is an empty list.
 
-Returns:
-- HTMLResponse: A complete HTML page containing:
-    * A search bar for entering queries
-    * An advanced search panel with category checkboxes
-    * A list of paper cards with authors, title, abstract, categories, DOI, and publication date
-    * Interactive styles: hover effects, collapsible panels, and responsive layout
+    Returns:
+    - HTMLResponse: A complete HTML page containing:
+        * A search bar for entering queries
+        * An advanced search panel with category checkboxes
+        * A list of paper cards with authors, title, abstract, categories, DOI, and publication date
+        * Interactive styles: hover effects, collapsible panels, and responsive layout
 
-Behavior:
-- If the 'query' parameter is non-empty, the endpoint calls 'get_arxiv_full_metadata' to fetch papers from arXiv.
-- Selected categories in 'cat' are applied as filters.
-- The search results are sorted by relevance and displayed in a styled HTML page.
-- If 'query' is empty, the endpoint returns a search page with no results.
+    Behavior:
+    - If the 'query' parameter is non-empty, the endpoint calls 'get_arxiv_full_metadata' to fetch papers from arXiv.
+    - Selected categories in 'cat' are applied as filters.
+    - The search results are sorted by relevance and displayed in a styled HTML page.
+    - If 'query' is empty, the endpoint returns a search page with no results.
 
-Example Usage:
-GET http://localhost:8000/?query=machine+learning&cat=cs.LG&cat=cs.AI
-"""
-
+    Example Usage:
+    GET http://localhost:8000/?query=machine+learning&cat=cs.LG&cat=cs.AI
+    """
     results = []
     if query.strip():
         results = get_arxiv_full_metadata(query, cat, MAX_PAPERS)
