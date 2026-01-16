@@ -454,7 +454,7 @@ label {{
 """
 
     if search_query:
-        html_content += f"<h2>Results for “{safe_query}”</h2>"
+        html_content += f"<h2 style=\"text-align: center;\">Results for “{safe_query}”</h2>"
         for p in papers:
             html_content += f"""
 <div class="paper">
